@@ -308,14 +308,14 @@ app.post('/ventas', (req, res) => {
     const venta_id = resultVenta.insertId;
 
     productos.forEach((item) => {
-      console.log(item);
-      const {
+      console.log('ITEM:', item);
+     const {
   producto_id,
   cantidad,
   tipo_venta,
-  paga
+  paga,
+  precio_venta
 } = item;
-
       const sqlProducto = `
   SELECT 
   precio_fardo,
@@ -339,11 +339,21 @@ WHERE id = ?
 
         const producto = resultProducto[0];
 
-        const precio = tipo_venta === 'fardo'
-          ? producto.precio_fardo
-          : producto.precio_pallet;
+        const precio =
+  precio_venta ??
+  (
+    tipo_venta === 'fardo'
+      ? producto.precio_fardo
+      : producto.precio_pallet
+  );
 
-        const subtotal = precio * cantidad;
+const subtotal = precio * cantidad;
+console.log({
+  precio_venta,
+  precio,
+  cantidad,
+  subtotal
+});
         totalVenta += subtotal;
        let unidadesDescontar = 0;
 
